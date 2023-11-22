@@ -1,0 +1,49 @@
+﻿@model List<Template>
+
+<section class="main">
+
+    <h1>Available Templates</h1>
+
+    <div class="row">
+
+        <div class="col-12">
+
+            <nav class="navbar navbar-light bg-light mb-3">
+
+                <div class="container-fluid justify-content-start">
+
+                    <a asp-action="Editor" asp-controller="Home" class="btn btn-success" type="button">New Template</a>
+
+                </div>
+
+            </nav>
+
+        </div>
+    </div>
+
+    <table class="table caption-top">
+        <caption>List of available templates</caption>
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Template template in Model)
+            {
+                <tr>
+                    <th scope="row">@template.Id</th>
+                    <td>@template.Name</td>
+                    <td><a href="@Url.Action("Editor", "Home", new { id = template.Id })">Edit</a></td>
+                    <td><a href="@Url.Action("Delete", "Home", new { id = template.Id })">Delete</a></td>
+                    <td><a href="@Url.Action("Merge", "Home", new { id = template.Id })">Merge</a></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+</section>

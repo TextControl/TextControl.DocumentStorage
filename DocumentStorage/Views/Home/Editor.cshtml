@@ -1,0 +1,60 @@
+﻿@model EditorViewModel
+
+@using TXTextControl.Web.MVC
+
+<button id="save" class="btn disabled btn-danger mb-3">Save</button>
+<a asp-action="Index" asp-controller="Home" class="btn btn-outline-primary mb-3">Back</a>
+
+@{
+    if (Model.TemplateData != null)
+    {
+        @Html.TXTextControl().TextControl().LoadDataFromJson(Model.InvoiceData).LoadText(Convert.FromBase64String(Model.TemplateData), TXTextControl.Web.BinaryStreamType.InternalUnicodeFormat).Render()
+    }
+    else
+    {
+        @Html.TXTextControl().TextControl().LoadDataFromJson(Model.InvoiceData).Render()
+    }
+}
+
+@section Scripts {
+    <script>
+
+        var dirtyFlag = false;
+
+        TXTextControl.addEventListener("textControlChanged", function () {
+            setDirtyFlag();
+            enableSaveButton();
+        });
+
+        $(document).ready(function () {
+            $("#save").click(saveDocument);
+        });
+
+        function setDirtyFlag() {
+            dirtyFlag = true;
+        }
+
+        function enableSaveButton() {
+            $("#save").removeClass("disabled");
+        }
+
+        function saveDocument() {
+            TXTextControl.saveDocument(TXTextControl.StreamType.InternalUnicodeFormat, function (content) {
+                $.ajax({
+                    type: "POST",
+                    url: "/Home/Save?id=@Model.DocumentId",
+                    contentType: "application/json",
+                    data: JSON.stringify(content),
+                    success: function () {
+                        setDirtyFlag();
+                        $("#save").addClass("disabled");
+                    },
+                    error: function () {
+                        alert("An error occurred while saving the data.");
+                    }
+                });
+            });
+        }
+
+    </script>
+}
